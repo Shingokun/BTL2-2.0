@@ -80,7 +80,7 @@ private:
 public:
   Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int num_fake_walls, Position * array_fake_walls) : num_rows(num_rows), num_cols(num_cols){}
     ~Map();
-    // bool isValid ( const Position & pos , MovingObject * mv_obj ) const ;
+    bool isValid ( const Position & pos , MovingObject * mv_obj ) const ;
 };
 
 
@@ -102,8 +102,10 @@ class Position{
     string str() const;
 
     bool isEqual(int in_r, int in_c) const;
+    
 
 };
+
 
 class MovingObject {
 protected:
@@ -116,7 +118,7 @@ public:
     MovingObject(int index, const Position pos, Map * map, const string & name="");
     virtual ~MovingObject();
     virtual Position getNextPosition() = 0;
-    Position getCurrentPosition() const;
+    Position getCurrentPosition() const {return pos;}
     virtual void move() = 0;
     virtual string str() const = 0;
 };

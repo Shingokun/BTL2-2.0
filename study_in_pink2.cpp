@@ -46,6 +46,12 @@ Map::~Map()
         }
         delete[] map;
 }
+bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
+        // Implement validation logic based on mv_obj and map
+        // Example: Sherlock can move on FakeWall, but Watson needs EXP
+        // You need to define this logic based on your requirements
+        return true; // Placeholder
+    }
 
 Position:: Position(const string & str_pos)
 {
@@ -65,6 +71,11 @@ string Position::str() const
 bool Position::isEqual(int in_r,int in_c) const
 {
    return (r==in_r && c==in_c);
+}
+const Position Position::npos = Position(-1, -1);
+MovingObject :: MovingObject(int index, const Position pos, Map * map, const string & name="")
+{
+
 }
 
 
