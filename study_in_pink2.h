@@ -115,7 +115,7 @@ protected:
     string name;
 
 public:
-    MovingObject(int index, const Position pos, Map * map, const string & name="");
+    MovingObject(int index, const Position pos, Map * map, const string & name=""): index(index), pos(pos), map(map), name(name) {}
     virtual ~MovingObject();
     virtual Position getNextPosition() = 0;
     Position getCurrentPosition() const {return pos;}
@@ -123,16 +123,53 @@ public:
     virtual string str() const = 0;
 };
 
-class Sherlock /* TODO */ {
+class Sherlock : public MovingObject /* TODO */
+{
 private:
     // TODO
+    string moving_rule;
+    int hp;
+    int exp;
+    string rule_char;
+    int rule_index;
+    
 
 public:
-    Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
-    // getNextPosition
-    // move
-    // str
+    Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp)
+    : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(min(init_exp,500)), exp(min(init_exp,900)), rule_index(0)
+    {
+        rule_char = moving_rule;
+    }
+    Position getNextPosition() override{
+        if (rule_char.empty()) return Position::npos;
+        Position next_pos;
+        if(rule_char[rule_index] == 'L'){
+            next_pos.setCol(next_pos.getCol()-1);
+        }
+        else if(rule_char[rule_index] == 'R'){
+            next_pos.setCol(next_pos.getCol()+1);
+        }
+        else if(rule_char[rule_index] == 'U'){
+            next_pos.setRow(next_pos.getRow()-1);
+        }
+        else if(rule_char[rule_index] == 'D'){
+            next_pos.setRow(next_pos.getRow()+1);
+        }
+        rule_index = (rule_index + 1) % moving_rule.length();
+        return next_pos;
+    }
+    void move() override{
+        Position next_pos = getNextPosition();
+         if (next_pos != Position::npos) {
+            pos = next_pos;
+        }
+    }
+    string str() const override {
+        return "Sherlock[index=" + to_string(index) +
+               ";pos=(" + to_string(pos.getRow()) + "," + to_string(pos.getCol()) +
+               ");moving_rule=" + moving_rule + "]";
     // ...
+}
 };
 
 class Watson /* TODO */ {
