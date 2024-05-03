@@ -52,16 +52,19 @@ public:
     MapElement(ElementType in_type): type(in_type){}
     virtual ~MapElement();
     virtual ElementType getType() const {return type;}
+    virtual int getReqEXP() const =0;
 };
 
 class Path : public MapElement {
     public:
     Path(): MapElement(PATH){}
+    int getReqEXP() const override{return 0; }
 };
 
 class Wall : public MapElement {
     public:
     Wall(): MapElement(WALL){}
+    int getReqEXP() const override{return 0; }
 };
 
 class FakeWall : public MapElement {
@@ -69,7 +72,7 @@ class FakeWall : public MapElement {
      int req_exp;
     public:
      FakeWall(int in_req_exp): MapElement(FAKE_WALL), req_exp(in_req_exp){}
-    int getReqEXP() const;
+     int getReqEXP() const override;
 };
 
 class Map {

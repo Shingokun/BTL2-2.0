@@ -16,12 +16,12 @@ Map :: Map(int num_rows, int num_cols, int num_walls, Position * array_walls, in
         for (int i = 0; i < num_rows; ++i) {
             map[i] = new MapElement*[num_cols];
             for (int j = 0; j < num_cols; ++j) {
-                map[i][j] = new Path;
+                map[i][j] = new Path();
             }
 
         // Place Wall objects
         for (int i = 0; i < num_walls; ++i) {
-            map[array_walls[i].getRow()][array_walls[i].getCol()] = new Wall;
+            map[array_walls[i].getRow()][array_walls[i].getCol()] = new Wall();
         }
 
         // Place FakeWall objects
@@ -61,7 +61,10 @@ bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
         if(map[i][j]->getType() == FAKE_WALL){
             if(mv_obj->getName() =="Watson" )
             {
-                if()
+                return (mv_obj->getExp() > map[i][j]->getReqEXP());
+                
+
+                
             }
         }
         return true; // Placeholder
