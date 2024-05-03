@@ -126,6 +126,7 @@ public:
     virtual void move() = 0;
     virtual string str() const = 0;
     virtual string getName() const;
+    virtual int getEXP() const;
 };
 
 class Sherlock : public MovingObject /* TODO */
@@ -145,46 +146,22 @@ public:
     {
         rule_char = moving_rule;
     }
-    Position getNextPosition() override{
-        if (rule_char.empty()) return Position::npos;
-        Position next_pos;
-        if(rule_char[rule_index] == 'L'){
-            next_pos.setCol(next_pos.getCol()-1);
-        }
-        else if(rule_char[rule_index] == 'R'){
-            next_pos.setCol(next_pos.getCol()+1);
-        }
-        else if(rule_char[rule_index] == 'U'){
-            next_pos.setRow(next_pos.getRow()-1);
-        }
-        else if(rule_char[rule_index] == 'D'){
-            next_pos.setRow(next_pos.getRow()+1);
-        }
-        rule_index = (rule_index + 1) % moving_rule.length();
-        return next_pos;
-    }
-    void move() override{
-        Position next_pos = getNextPosition();
-         if (map->isValid(next_pos, this)) {
-            pos = next_pos;
-        }
-    }
-    string str() const override {
-        return "Sherlock[index=" + to_string(index) +
-               ";pos=(" + to_string(pos.getRow()) + "," + to_string(pos.getCol()) +
-               ");moving_rule=" + moving_rule + "]";
-    }
-    string getName() const override;    
+    Position getNextPosition() override;
+    void move() override;
+    string str() const override;
+    string getName() const override;  
+    int getEXP() const override;
     // ...
 
 };
 
-class Watson /* TODO */ {
+class Watson : public MovingObject/* TODO */ {
 private:
     // TODO
 
 public:
     Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp);
+    int getEXP() const override;
     // getNextPosition
     // move
     // str

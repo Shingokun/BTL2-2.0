@@ -61,7 +61,7 @@ bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
         if(map[i][j]->getType() == FAKE_WALL){
             if(mv_obj->getName() =="Watson" )
             {
-                return (mv_obj->getExp() > map[i][j]->getReqEXP());
+                return (mv_obj->getEXP() > map[i][j]->getReqEXP());
                 
 
                 
@@ -95,7 +95,36 @@ MovingObject :: MovingObject(int index, const Position pos, Map * map, const str
 
 }
 
-
+Position Sherlock::getNextPosition() 
+{
+     if (rule_char.empty()) return Position::npos;
+        Position next_pos;
+        if(rule_char[rule_index] == 'L'){
+            next_pos.setCol(next_pos.getCol()-1);
+        }
+        else if(rule_char[rule_index] == 'R'){
+            next_pos.setCol(next_pos.getCol()+1);
+        }
+        else if(rule_char[rule_index] == 'U'){
+            next_pos.setRow(next_pos.getRow()-1);
+        }
+        else if(rule_char[rule_index] == 'D'){
+            next_pos.setRow(next_pos.getRow()+1);
+        }
+        rule_index = (rule_index + 1) % moving_rule.length();
+        return next_pos;
+}
+void Sherlock::move() 
+{
+      Position next_pos = getNextPosition();
+         if (map->isValid(next_pos, this)) {
+            pos = next_pos;
+        }
+}
+string Sherlock::str() const
+{
+    return "Sherlock[index=" + to_string(index) + ";pos=(" + to_string(pos.getRow()) + "," + to_string(pos.getCol()) +");moving_rule=" + moving_rule + "]";
+}
 string Sherlock::getName() const 
 {
     return "Sherlock"; 
