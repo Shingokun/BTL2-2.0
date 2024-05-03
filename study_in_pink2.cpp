@@ -92,8 +92,9 @@ bool Position::isEqual(int in_r,int in_c) const
 const Position Position::npos = Position(-1, -1);
 MovingObject :: MovingObject(int index, const Position pos, Map * map, const string & name="")
 {
-
+   
 }
+
 
 Position Sherlock::getNextPosition() 
 {
@@ -129,6 +130,43 @@ string Sherlock::getName() const
 {
     return "Sherlock"; 
 }
+
+
+Position Watson::getNextPosition() 
+{
+     if (rule_char.empty()) return Position::npos;
+        Position next_pos;
+        if(rule_char[rule_index] == 'L'){
+            next_pos.setCol(next_pos.getCol()-1);
+        }
+        else if(rule_char[rule_index] == 'R'){
+            next_pos.setCol(next_pos.getCol()+1);
+        }
+        else if(rule_char[rule_index] == 'U'){
+            next_pos.setRow(next_pos.getRow()-1);
+        }
+        else if(rule_char[rule_index] == 'D'){
+            next_pos.setRow(next_pos.getRow()+1);
+        }
+        rule_index = (rule_index + 1) % moving_rule.length();
+        return next_pos;
+}
+void Watson::move() 
+{
+      Position next_pos = getNextPosition();
+         if (map->isValid(next_pos, this)) {
+            pos = next_pos;
+        }
+}
+string Watson::str() const
+{
+    return "Watson[index=" + to_string(index) + ";pos=(" + to_string(pos.getRow()) + "," + to_string(pos.getCol()) +");moving_rule=" + moving_rule + "]";
+}
+string Watson::getName() const 
+{
+    return "Watson"; 
+}
+
 
 
 ////////////////////////////////////////////////
