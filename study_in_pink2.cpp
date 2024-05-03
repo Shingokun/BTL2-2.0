@@ -46,10 +46,24 @@ Map::~Map()
         }
         delete[] map;
 }
+
+
 bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
-        // Implement validation logic based on mv_obj and map
-        // Example: Sherlock can move on FakeWall, but Watson needs EXP
-        // You need to define this logic based on your requirements
+     int i = pos.getRow();
+     int j = pos.getCol();
+        if (i<0 || j<0 || i> num_rows || j> num_cols)
+        {   
+            return false;
+        }
+        if (map[i][j]->getType() == WALL) {
+              return false;
+        }
+        if(map[i][j]->getType() == FAKE_WALL){
+            if(mv_obj->getName() =="Watson" )
+            {
+                if()
+            }
+        }
         return true; // Placeholder
     }
 
@@ -76,6 +90,12 @@ const Position Position::npos = Position(-1, -1);
 MovingObject :: MovingObject(int index, const Position pos, Map * map, const string & name="")
 {
 
+}
+
+
+string Sherlock::getName() const 
+{
+    return "Sherlock"; 
 }
 
 

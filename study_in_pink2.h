@@ -114,6 +114,7 @@ protected:
     Map * map;
     string name;
 
+
 public:
     MovingObject(int index, const Position pos, Map * map, const string & name=""): index(index), pos(pos), map(map), name(name) {}
     virtual ~MovingObject();
@@ -121,6 +122,7 @@ public:
     Position getCurrentPosition() const {return pos;}
     virtual void move() = 0;
     virtual string str() const = 0;
+    virtual string getName() const;
 };
 
 class Sherlock : public MovingObject /* TODO */
@@ -160,7 +162,7 @@ public:
     }
     void move() override{
         Position next_pos = getNextPosition();
-         if (next_pos != Position::npos) {
+         if (map->isValid(next_pos, this)) {
             pos = next_pos;
         }
     }
@@ -168,8 +170,10 @@ public:
         return "Sherlock[index=" + to_string(index) +
                ";pos=(" + to_string(pos.getRow()) + "," + to_string(pos.getCol()) +
                ");moving_rule=" + moving_rule + "]";
+    }
+    string getName() const override;    
     // ...
-}
+
 };
 
 class Watson /* TODO */ {
