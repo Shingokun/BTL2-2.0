@@ -94,6 +94,11 @@ MovingObject :: MovingObject(int index, const Position pos, Map * map, const str
 {
    
 }
+string MovingObject::getName() const
+{
+    return name;
+}
+
 
 
 Position Sherlock::getNextPosition() 
@@ -166,8 +171,132 @@ string Watson::getName() const
 {
     return "Watson"; 
 }
+int Watson::getEXP() const
+{
+    return exp;
+}
 
+string Criminal::getName() const
+{
+    return "Criminal";
+}
+string Criminal::str() const
+{
+    return "Criminal[index=" + to_string(index) + ";pos=(" + to_string(pos.getRow()) + "," + to_string(pos.getCol()) +")]";
+}
+Position Criminal::getNextPosition() 
+{
+    Position next_pos;
+    int max_distance ;
+    int dis_sherlock;
+    int dis_watson;
+    int total_dis;
+    dis_sherlock = std::abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                           std::abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = std::abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
+                         std::abs(pos.getCol() - watson->getCurrentPosition().getCol());
+     total_dis = dis_sherlock + dis_watson;
+    max_distance = total_dis;
+    //U
+    if (map->isValid(Position(pos.getRow() - 1, pos.getCol()), this))
+    {
+      pos =  Position(pos.getRow() - 1, pos.getCol());
+    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                    abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+    total_dis = dis_sherlock + dis_watson;
+    if (total_dis > max_distance) 
+    {
+        next_pos = pos;
+    }
+    }
+    //L
+    if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
+    {
+      pos =  Position(pos.getRow() , pos.getCol()-1);
+    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                 abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+    total_dis = dis_sherlock + dis_watson;
+    if (total_dis > max_distance) 
+    {
+        next_pos = pos;
+    }
+    }
+    //D
+    if (map->isValid(Position(pos.getRow() +1, pos.getCol()), this))
+    {
+      pos =  Position(pos.getRow() + 1, pos.getCol());
+    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                    abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+    total_dis = dis_sherlock + dis_watson;
+    if (total_dis > max_distance) 
+    {
+        next_pos = pos;
+    }
+    }
 
+    //R
+    if (map->isValid(Position(pos.getRow() , pos.getCol()+1), this))
+    {
+      pos =  Position(pos.getRow() , pos.getCol()+1);
+    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                 abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+    total_dis = dis_sherlock + dis_watson;
+    if (total_dis > max_distance) 
+    {
+        next_pos = pos;
+    }
+    }
+
+    
+
+    return next_pos;
+}
+void Criminal::move() 
+{
+      Position next_pos = getNextPosition();
+         if (map->isValid(next_pos, this)) {
+            pos = next_pos;
+        }
+}
+ArrayMovingObject::~ArrayMovingObject()
+{
+    for (int i = 0; i < count; ++i) {
+            delete arr_mv_objs[i];
+        }
+        delete[] arr_mv_objs;
+}
+bool ArrayMovingObject::isFull() const
+{
+    return count == capacity;
+}
+bool ArrayMovingObject::add(MovingObject * mv_obj)
+{
+     if (!isFull()) {
+            arr_mv_objs[count++] = mv_obj;
+            return true;
+        }
+        return false;
+}
+string ArrayMovingObject::str() const{
+    string result = "ArrayMovingObject[count=" + std::to_string(count) +
+                            ";capacity=" + std::to_string(capacity) + ";";
+        for (int i = 0; i < count; ++i) {
+            result += arr_mv_objs[i]->str();
+            if (i < count - 1) {
+                result += ";";
+            }
+        }
+        result += "]";
+        return result;
+}
 
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER

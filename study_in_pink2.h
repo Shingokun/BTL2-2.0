@@ -178,24 +178,36 @@ public:
     
 };
 
-class Criminal /* TODO */ {
+class Criminal:public MovingObject /* TODO */ {
 private:
     // TODO
+    Sherlock* sherlock;
+    Watson* watson;
 
 public:
-    Criminal(int index, const Position & init_pos, Map * map, Sherlock * sherlock, Watson * watson);
-    // getNextPosition
-    // move
-    // str
+    Criminal(int index, const Position & init_pos, Map * map, Sherlock * sherlock, Watson * watson): MovingObject(index, init_pos, map, "Criminal"),sherlock(sherlock),watson(watson)
+    {
+
+    }
+
+    string getName() const override;
+    Position getNextPosition() override;
+    void move() override;
+    string str() const override;
     // ...
 };
 
 class ArrayMovingObject {
 private:
     // TODO
+    MovingObject** arr_mv_objs;
+    int count = 0;
+    int capacity;
 
 public:
-    ArrayMovingObject(int capacity);
+    ArrayMovingObject(int capacity): capacity(capacity ){
+        arr_mv_objs = new MovingObject*[capacity];
+    }
 
     ~ArrayMovingObject() ;
     bool isFull() const;
