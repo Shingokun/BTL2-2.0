@@ -13,12 +13,12 @@
 
 using namespace std;
 
-void g_satc_02() { // global
+/*void g_satc_02() { // global
     cout << "----- Sample Testcase 02 -----" << endl;
     Configuration * config = new Configuration("sa_tc_02_config");
     cout << config->str() << endl;
     delete config;
-}
+}*/
 
 class TestStudyInPink {
 public:
@@ -67,7 +67,7 @@ public:
         delete map;
     }
 
-    static void satc_02() {
+    /*static void satc_02() {
         g_satc_02();
     }
 
@@ -103,6 +103,7 @@ public:
         delete map;
         delete robotC;
     }
+    */
 };
 
 int main(int argc, const char * argv[]) {

@@ -50,7 +50,7 @@ protected:
     ElementType type;
 public:
     MapElement(ElementType in_type): type(in_type){}
-    virtual ~MapElement();
+    virtual ~MapElement(){}
     virtual ElementType getType() const {return type;}
     virtual int getReqEXP() const =0;
 };
@@ -81,7 +81,7 @@ private:
     MapElement ***map;
 
 public:
-  Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int num_fake_walls, Position * array_fake_walls) : num_rows(num_rows), num_cols(num_cols){}
+  Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int num_fake_walls, Position * array_fake_walls);
     ~Map();
     bool isValid ( const Position & pos , MovingObject * mv_obj ) const ;
 };
@@ -120,13 +120,13 @@ protected:
 
 public:
     MovingObject(int index, const Position pos, Map * map, const string & name=""): index(index), pos(pos), map(map), name(name) {}
-    virtual ~MovingObject();
+    virtual ~MovingObject(){}
     virtual Position getNextPosition() = 0;
     Position getCurrentPosition() const {return pos;}
     virtual void move() = 0;
     virtual string str() const = 0;
    virtual string getName() const;
-    virtual int getEXP() const;
+    virtual int getEXP() const{return 0;}
 };
 
 class Sherlock : public MovingObject /* TODO */
@@ -185,7 +185,8 @@ private:
     Watson* watson;
 
 public:
-    Criminal(int index, const Position & init_pos, Map * map, Sherlock * sherlock, Watson * watson): MovingObject(index, init_pos, map, "Criminal"),sherlock(sherlock),watson(watson)
+    Criminal(int index, const Position & init_pos, Map * map, Sherlock * sherlock, Watson * watson)
+    : MovingObject(index, init_pos, map, "Criminal"),sherlock(sherlock),watson(watson)
     {
 
     }
@@ -216,7 +217,7 @@ public:
     int size() const; // return current number of elements in the array
     string str() const;
 };
-
+/*
 class Configuration {
     friend class StudyPinkProgram;
 
@@ -241,7 +242,7 @@ private:
     Criminal * criminal;
     
     Map * map;
-    ArrayMovingObject * arr_mv_objs;
+   ArrayMovingObject * arr_mv_objs;
 
 
 public:
@@ -287,7 +288,7 @@ public:
 
     ~StudyPinkProgram();
 };
-
+*/
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
 ////////////////////////////////////////////////

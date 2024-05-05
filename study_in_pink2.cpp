@@ -9,7 +9,7 @@ int FakeWall :: getReqEXP() const
 {
    return req_exp;
 }
-Map :: Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int num_fake_walls, Position * array_fake_walls)
+Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int num_fake_walls, Position * array_fake_walls)
 :num_rows(num_rows), num_cols(num_cols)
 {
       map = new MapElement**[num_rows];
@@ -69,15 +69,12 @@ bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
         }
         return true; // Placeholder
     }
-
+Position::Position(int r, int c):r(r), c(c){}
 Position:: Position(const string & str_pos)
 {
-    int pos = str_pos.find(',');
-    if(pos!= string::npos)
-    {
-        r=stoi(str_pos.substr(1,pos-1));
-        c=stoi(str_pos.substr(pos+1,str_pos.length()-pos-2));  
-    }
+    istringstream iss(str_pos);
+    char nope;
+    iss >>nope>>r>>nope>>c>>nope;
 
 
 }
@@ -87,13 +84,11 @@ string Position::str() const
 }
 bool Position::isEqual(int in_r,int in_c) const
 {
-   return (r==in_r && c==in_c);
+   return (this->r==in_r && this->c==in_c);
 }
+
 const Position Position::npos = Position(-1, -1);
-MovingObject :: MovingObject(int index, const Position pos, Map * map, const string & name="")
-{
-   
-}
+
 string MovingObject::getName() const
 {
     return name;
@@ -135,7 +130,10 @@ string Sherlock::getName() const
 {
     return "Sherlock"; 
 }
-
+int Sherlock::getEXP() const
+{
+    return exp;
+}
 
 Position Watson::getNextPosition() 
 {
