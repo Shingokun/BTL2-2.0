@@ -13,17 +13,17 @@ Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int 
 :num_rows(num_rows), num_cols(num_cols)
 {
       map = new MapElement**[num_rows];
+      
         for (int i = 0; i < num_rows; ++i) {
             map[i] = new MapElement*[num_cols];
             for (int j = 0; j < num_cols; ++j) {
                 map[i][j] = new Path();
             }
-
+        }
         // Place Wall objects
         for (int i = 0; i < num_walls; ++i) {
             map[array_walls[i].getRow()][array_walls[i].getCol()] = new Wall();
         }
-
         // Place FakeWall objects
         for (int i = 0; i < num_fake_walls; ++i) {
             int x= array_fake_walls[i].getRow();
@@ -31,8 +31,6 @@ Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int 
 
             map[x][y] = new FakeWall((x*275+y*139+89)%900 +1 );
         }
-    
-    }
 }
       
 
@@ -266,10 +264,12 @@ void Criminal::move()
 }
 ArrayMovingObject::~ArrayMovingObject()
 {
+    /*
     for (int i = 0; i < count; ++i) {
             delete arr_mv_objs[i];
         }
         delete[] arr_mv_objs;
+    */
 }
 bool ArrayMovingObject::isFull() const
 {
