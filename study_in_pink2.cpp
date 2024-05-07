@@ -32,8 +32,6 @@ Map::Map(int num_rows, int num_cols, int num_walls, Position * array_walls, int 
             map[x][y] = new FakeWall((x*275+y*139+89)%900 +1 );
         }
 }
-      
-
 Map::~Map()
 {
      for (int i = 0; i < num_rows; ++i) {
@@ -44,8 +42,6 @@ Map::~Map()
         }
         delete[] map;
 }
-
-
 bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
      int i = pos.getRow();
      int j = pos.getCol();
@@ -73,8 +69,6 @@ Position:: Position(const string & str_pos)
     istringstream iss(str_pos);
     char nope;
     iss >>nope>>r>>nope>>c>>nope;
-
-
 }
 string Position::str() const
 {
@@ -84,16 +78,11 @@ bool Position::isEqual(int in_r,int in_c) const
 {
    return (this->r==in_r && this->c==in_c);
 }
-
 const Position Position::npos = Position(-1, -1);
-
 string MovingObject::getName() const
 {
     return name;
 }
-
-
-
 Position Sherlock::getNextPosition() 
 {
      if (rule_char.empty()) return Position::npos;
@@ -132,7 +121,6 @@ int Sherlock::getEXP() const
 {
     return exp;
 }
-
 Position Watson::getNextPosition() 
 {
      if (rule_char.empty()) return Position::npos;
@@ -171,7 +159,6 @@ int Watson::getEXP() const
 {
     return exp;
 }
-
 string Criminal::getName() const
 {
     return "Criminal";
@@ -262,15 +249,6 @@ void Criminal::move()
             pos = next_pos;
         }
 }
-ArrayMovingObject::~ArrayMovingObject()
-{
-    /*
-    for (int i = 0; i < count; ++i) {
-            delete arr_mv_objs[i];
-        }
-        delete[] arr_mv_objs;
-    */
-}
 bool ArrayMovingObject::isFull() const
 {
     return count == capacity;
@@ -295,7 +273,173 @@ string ArrayMovingObject::str() const{
         result += "]";
         return result;
 }
+Configuration ::Configuration(const string &filepath)
+{
+    ifstream file(filepath);
+    string line;
+    while (getline(file, line)) {
+        if(line.find("MAP_NUM_ROWS="))
+        {
+            map_num_rows = stoi(line.substr(13));
+        }
+        if(line.find("MAP_NUM_COLS"))
+        {
+            map_num_cols = stoi(line.substr(13));
+        }
+        if(line.find("MAX_NUM_MOVING_OBJECTS="))
+        {
+            max_num_moving_objects = stoi(line.substr(23));
+        }
+        if(line.find("ARRAY_WALLS="))
+        {
+            while(true)
+            {
+            int count = 13;
+            string wall_position = line.substr(count,5);
+            istringstream iss(wall_position);
+            
+            char nope;
+            char check;
+            int x,y;
+            iss >>nope>>x>>nope>>y>>nope>>check;
+            arr_walls[num_walls] = Position(x,y);
+            if(check == ';')
+            {
+              count +6;  
+              num_walls++;
+            }
+            else if(check == ']')
+            {
+                break;
+            }
+            }
+            
 
+        }
+        if(line.find("ARRAY_FAKE_WALLS="))
+        {
+            while (true)
+            {
+                int count = 18;
+                string fake_wall_position = line.substr(count, 5);
+                istringstream iss(fake_wall_position);
+                char nope;
+                char check;
+                int x, y;
+                iss >> nope >> x >> nope >> y >> nope >> check;
+                arr_fake_walls[num_fake_walls] = Position(x, y);
+                if (check == ';')
+                {
+                    count + 6;
+                    num_fake_walls++;
+                }
+                else if (check == ']')
+                {
+                    break;
+                }
+            }
+            
+        }
+        if(line.find("SHERLOCK_MOVING_RULE="))
+        {
+            sherlock_moving_rule = line.substr(21);
+        }
+        if(line.find("SHERLOCK_INIT_POS="))
+        {
+          string sherlock_position = line.substr(18);
+          istringstream iss(sherlock_position);
+          char nope;
+          int x,y;
+          iss >>nope>>x>>nope>>y>>nope;
+          sherlock_init_pos = Position(x,y);
+        }
+        if(line.find("SHERLOCK_INIT_HP="))
+        {
+            sherlock_init_hp = stoi(line.substr(17));
+        }
+        if(line.find("SHERLOCK_INIT_EXP="))
+        {
+            sherlock_init_exp = stoi(line.substr(18));
+        }
+        if(line.find("WATSON_MOVING_RULE="))
+        {
+            watson_moving_rule = line.substr(19);
+        }
+        if(line.find("WATSON_INIT_POS="))
+        {
+            string watson_position = line.substr(16);
+            istringstream iss(watson_position);
+            char nope;
+            int x,y;
+            iss >>nope>>x>>nope>>y>>nope;
+            watson_init_pos = Position(x,y);
+        }
+        if(line.find("WATSON_INIT_HP="))
+        {
+            watson_init_hp = stoi(line.substr(15));
+        }
+        if(line.find("WATSON_INIT_EXP="))
+        {
+            watson_init_exp = stoi(line.substr(16));
+        }
+        if(line.find("CRIMINAL_MOVING_RULE="))
+        {
+            string criminal_position = line.substr(21);
+            istringstream iss(criminal_position);
+            char nope;
+            int x,y;
+            iss >>nope>>x>>nope>>y>>nope;
+            criminal_init_pos = Position(x,y);
+        }
+        if(line.find("NUM_STEPS="))
+        {
+            num_steps = stoi(line.substr(10));
+        }
+    }
+    file.close();
+}
+string Configuration::str() const
+{
+  stringstream ss;
+  ss << "Configuration[";
+  ss << "MAP_NUM_ROWS=" << map_num_rows << endl;
+  ss << "MAP_NUM_COLS=" << map_num_cols << endl;
+  ss << "MAX_NUM_MOVING_OBJECTS=" << max_num_moving_objects << endl;
+  ss << "NUM_WALLS=" << num_walls << endl;
+  ss<<"ARRAY_WALLS=[";
+  for (int i = 0; i < num_walls; i++)
+  {
+    if(i == num_walls-1)
+    {
+        ss<<"("<<arr_walls[i].getRow()<<","<<arr_walls[i].getCol()<<")]"<<endl;
+        break;
+    }
+    ss<<"("<<arr_walls[i].getRow()<<","<<arr_walls[i].getCol()<<");";
+  }
+  ss<<"NUM_FAKE_WALLS=" << num_fake_walls << endl;
+  ss<<"ARRAY_FAKE_WALLS=[";
+  for (int i = 0; i < num_walls; i++)
+  {
+    if(i == num_walls-1)
+    {
+        ss<<"("<<arr_fake_walls[i].getRow()<<","<<arr_fake_walls[i].getCol()<<")]"<<endl;
+        break;
+    }
+    ss<<"("<<arr_fake_walls[i].getRow()<<","<<arr_fake_walls[i].getCol()<<");";
+  }
+  ss<<"SHERLOCK_MOVING_RULE="<<sherlock_moving_rule<<endl;
+  ss<<"SHERLOCK_INIT_POS=("<<sherlock_init_pos.getRow()<<","<<sherlock_init_pos.getCol()<<")"<<endl;
+  ss<<"SHERLOCK_INIT_HP="<<sherlock_init_hp<<endl;
+  ss<<"SHERLOCK_INIT_EXP="<<sherlock_init_exp<<endl;
+  ss<<"WATSON_MOVING_RULE="<<watson_moving_rule<<endl;
+  ss<<"WATSON_INIT_POS=("<<watson_init_pos.getRow()<<","<<watson_init_pos.getCol()<<")"<<endl;
+  ss<<"WATSON_INIT_HP="<<watson_init_hp<<endl;
+  ss<<"WATSON_INIT_EXP="<<watson_init_exp<<endl;
+  ss<<"CRIMINAL_INIT_POS=("<<criminal_init_pos.getRow()<<","<<criminal_init_pos.getCol()<<")"<<endl;
+  ss<<"NUM_STEPS="<<num_steps<<endl;
+  ss<<"]";
+  return ss.str();
+}
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
 /////////////////////////////////////////////intint

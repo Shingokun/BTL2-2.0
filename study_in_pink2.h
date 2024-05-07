@@ -22,16 +22,16 @@
 // Forward declaration
  class MovingObject;
  class Position;
-// class Configuration;
+ class Configuration;
  class Map;
 
-// class Criminal;
+  class Criminal;
 // class RobotS;
 // class RobotW;
 // class RobotSW;
 // class RobotC;
 
-// class ArrayMovingObject;
+ class ArrayMovingObject;
 // class StudyPinkProgram;
 
 // class BaseItem;
@@ -210,28 +210,42 @@ public:
         arr_mv_objs = new MovingObject*[capacity];
     }
 
-    ~ArrayMovingObject() ;
+    ~ArrayMovingObject(){};
     bool isFull() const;
     bool add(MovingObject * mv_obj);
     MovingObject * get(int index) const;
     int size() const; // return current number of elements in the array
     string str() const;
 };
-/*
+
 class Configuration {
     friend class StudyPinkProgram;
-
 private:
-    // TODO
-
+    // TODO 
+    int map_num_rows, map_num_cols;
+    int max_num_moving_objects;
+    int num_walls=0;
+    Position *arr_walls;
+    int num_fake_walls=0;
+    Position *arr_fake_walls;
+    string sherlock_moving_rule;
+    Position sherlock_init_pos;
+    int sherlock_init_hp;
+    int sherlock_init_exp;
+    string watson_moving_rule;
+    Position watson_init_pos;
+    int watson_init_hp;
+    int watson_init_exp;
+    Position criminal_init_pos;
+    int num_steps;
 public:
     Configuration(const string & filepath);
-    ~Configuration();
+    ~Configuration(){}
     string str() const;
 };
 
 // Robot, BaseItem, BaseBag,...
-
+/*
 class StudyPinkProgram {
 private:
     // Sample attributes
