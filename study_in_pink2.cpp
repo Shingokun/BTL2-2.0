@@ -280,7 +280,9 @@ Configuration ::Configuration(const string &filepath)
     while (getline(file, line)) {
         if(line.find("MAP_NUM_ROWS="))
         {
+            cout<<line<<endl;
             map_num_rows = stoi(line.substr(13));
+            cout<<"Done!"<<endl;
         }
         if(line.find("MAP_NUM_COLS"))
         {
@@ -305,7 +307,7 @@ Configuration ::Configuration(const string &filepath)
             arr_walls[num_walls] = Position(x,y);
             if(check == ';')
             {
-              count +6;  
+              count = count +6;
               num_walls++;
             }
             else if(check == ']')
@@ -330,7 +332,7 @@ Configuration ::Configuration(const string &filepath)
                 arr_fake_walls[num_fake_walls] = Position(x, y);
                 if (check == ';')
                 {
-                    count + 6;
+                     count = count + 6;
                     num_fake_walls++;
                 }
                 else if (check == ']')
