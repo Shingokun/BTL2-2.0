@@ -277,76 +277,83 @@ Configuration ::Configuration(const string &filepath)
 {
     ifstream file(filepath);
     string line;
-    while (getline(file, line)) {
-        if(line.find("MAP_NUM_ROWS="))
+    
+    while (getline(file, line)) 
+    {
+        
+        if( line.find("MAP_NUM_ROWS=")==0)
         {
-            cout<<line<<endl;
-            map_num_rows = stoi(line.substr(13));
-            cout<<"Done!"<<endl;
+            map_num_rows = stoi(line.substr(13)); 
         }
-        if(line.find("MAP_NUM_COLS"))
+        else if(line.find("MAP_NUM_COLS=")==0)
         {
             map_num_cols = stoi(line.substr(13));
         }
-        if(line.find("MAX_NUM_MOVING_OBJECTS="))
+    
+        else if(line.find("MAX_NUM_MOVING_OBJECTS=")==0)
         {
             max_num_moving_objects = stoi(line.substr(23));
         }
-        if(line.find("ARRAY_WALLS="))
+        else if(line.find("ARRAY_WALLS=")==0)
         {
-            while(true)
-            {
-            int count = 13;
-            string wall_position = line.substr(count,5);
-            istringstream iss(wall_position);
-            
-            char nope;
-            char check;
-            int x,y;
-            iss >>nope>>x>>nope>>y>>nope>>check;
-            arr_walls[num_walls] = Position(x,y);
-            if(check == ';')
-            {
-              count = count +6;
-              num_walls++;
-            }
-            else if(check == ']')
-            {
-                break;
-            }
-            }
-            
 
-        }
-        if(line.find("ARRAY_FAKE_WALLS="))
-        {
-            while (true)
-            {
-                int count = 18;
-                string fake_wall_position = line.substr(count, 5);
-                istringstream iss(fake_wall_position);
-                char nope;
-                char check;
-                int x, y;
-                iss >> nope >> x >> nope >> y >> nope >> check;
-                arr_fake_walls[num_fake_walls] = Position(x, y);
-                if (check == ';')
-                {
-                     count = count + 6;
-                    num_fake_walls++;
-                }
-                else if (check == ']')
-                {
-                    break;
-                }
+            string wall_positions = line.substr(12); 
+            wall_positions = wall_positions.substr(1, wall_positions.length() - 2);
+            num_walls = 0;
+            for (int i = 0; i < wall_positions.length(); ++i) {
+            if (wall_positions[i] == ';') {
+            num_walls++;
+            }
+            }
+            num_walls++; 
+            arr_walls = new Position[num_walls];
+            int wall_index = 0;
+            int start_pos = 0;
+            for (int i = 0; i <= wall_positions.length(); ++i) {
+            if (wall_positions[i] == ';' || i == wall_positions.length()) {
+            string wall_token = wall_positions.substr(start_pos, i - start_pos);
+            int comma_pos = wall_token.find(",");
+            int row = stoi(wall_token.substr(1, comma_pos - 1));
+            int col = stoi(wall_token.substr(comma_pos + 1, wall_token.length() - comma_pos - 2));
+            arr_walls[wall_index++] = Position(row, col);
+            start_pos = i + 1;
+            }
             }
             
         }
-        if(line.find("SHERLOCK_MOVING_RULE="))
+        else if(line.find("ARRAY_FAKE_WALLS=")==0)
+        {
+            
+            string fake_wall_positions = line.substr(17); 
+            fake_wall_positions = fake_wall_positions.substr(1, fake_wall_positions.length() - 2);
+            num_fake_walls = 0;
+            for (int i = 0; i <= fake_wall_positions.length(); ++i) {
+            if (fake_wall_positions[i] == ';') {
+            num_fake_walls++ ;
+            }
+            }
+            num_fake_walls ++;
+            arr_fake_walls = new Position[num_fake_walls];
+            int fake_wall_index = 0;
+            int start_pos = 0;
+            for (int i = 0; i <= fake_wall_positions.length(); ++i) {
+            if (fake_wall_positions[i] == ';' || i == fake_wall_positions.length()) {
+            string fake_wall_token = fake_wall_positions.substr(start_pos, i - start_pos);
+            int comma_pos = fake_wall_token.find(",");
+            int row = stoi(fake_wall_token.substr(1, comma_pos - 1));
+            int col = stoi(fake_wall_token.substr(comma_pos + 1, fake_wall_token.length() - comma_pos - 2));
+            arr_fake_walls[fake_wall_index++] = Position(row, col);
+            start_pos = i + 1;
+            }
+            }
+            
+            
+        }
+        else if(line.find("SHERLOCK_MOVING_RULE=")==0)
         {
             sherlock_moving_rule = line.substr(21);
         }
-        if(line.find("SHERLOCK_INIT_POS="))
+        else if(line.find("SHERLOCK_INIT_POS=")==0)
         {
           string sherlock_position = line.substr(18);
           istringstream iss(sherlock_position);
@@ -355,19 +362,19 @@ Configuration ::Configuration(const string &filepath)
           iss >>nope>>x>>nope>>y>>nope;
           sherlock_init_pos = Position(x,y);
         }
-        if(line.find("SHERLOCK_INIT_HP="))
+        else if(line.find("SHERLOCK_INIT_HP=")==0)
         {
             sherlock_init_hp = stoi(line.substr(17));
         }
-        if(line.find("SHERLOCK_INIT_EXP="))
+        else if(line.find("SHERLOCK_INIT_EXP=")==0)
         {
             sherlock_init_exp = stoi(line.substr(18));
         }
-        if(line.find("WATSON_MOVING_RULE="))
+        else if(line.find("WATSON_MOVING_RULE=")==0)
         {
             watson_moving_rule = line.substr(19);
         }
-        if(line.find("WATSON_INIT_POS="))
+        else if(line.find("WATSON_INIT_POS=")==0)
         {
             string watson_position = line.substr(16);
             istringstream iss(watson_position);
@@ -376,34 +383,36 @@ Configuration ::Configuration(const string &filepath)
             iss >>nope>>x>>nope>>y>>nope;
             watson_init_pos = Position(x,y);
         }
-        if(line.find("WATSON_INIT_HP="))
+        else if(line.find("WATSON_INIT_HP=")==0)
         {
             watson_init_hp = stoi(line.substr(15));
         }
-        if(line.find("WATSON_INIT_EXP="))
+        else if(line.find("WATSON_INIT_EXP=")==0)
         {
             watson_init_exp = stoi(line.substr(16));
         }
-        if(line.find("CRIMINAL_MOVING_RULE="))
+        else if(line.find("CRIMINAL_INIT_POS=")==0)
         {
-            string criminal_position = line.substr(21);
+            string criminal_position = line.substr(18);
             istringstream iss(criminal_position);
             char nope;
             int x,y;
             iss >>nope>>x>>nope>>y>>nope;
             criminal_init_pos = Position(x,y);
         }
-        if(line.find("NUM_STEPS="))
+        else if(line.find("NUM_STEPS=")==0)
         {
             num_steps = stoi(line.substr(10));
         }
+    
     }
+    
     file.close();
 }
 string Configuration::str() const
 {
   stringstream ss;
-  ss << "Configuration[";
+  ss << "Configuration["<<endl;
   ss << "MAP_NUM_ROWS=" << map_num_rows << endl;
   ss << "MAP_NUM_COLS=" << map_num_cols << endl;
   ss << "MAX_NUM_MOVING_OBJECTS=" << max_num_moving_objects << endl;
@@ -420,9 +429,9 @@ string Configuration::str() const
   }
   ss<<"NUM_FAKE_WALLS=" << num_fake_walls << endl;
   ss<<"ARRAY_FAKE_WALLS=[";
-  for (int i = 0; i < num_walls; i++)
+  for (int i = 0; i < num_fake_walls; i++)
   {
-    if(i == num_walls-1)
+    if(i == num_fake_walls-1)
     {
         ss<<"("<<arr_fake_walls[i].getRow()<<","<<arr_fake_walls[i].getCol()<<")]"<<endl;
         break;

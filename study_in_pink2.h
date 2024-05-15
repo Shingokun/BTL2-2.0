@@ -224,9 +224,9 @@ private:
     // TODO 
     int map_num_rows, map_num_cols;
     int max_num_moving_objects;
-    int num_walls=0;
+    int num_walls;
     Position *arr_walls;
-    int num_fake_walls=0;
+    int num_fake_walls;
     Position *arr_fake_walls;
     string sherlock_moving_rule;
     Position sherlock_init_pos;
