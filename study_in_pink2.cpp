@@ -451,6 +451,44 @@ string Configuration::str() const
   ss<<"]";
   return ss.str();
 }
+Robot::Robot(int index, const Position & init_pos, Map * map, RobotType robot_type, string name, Criminal* criminal, Sherlock* sherlock, Watson* watson)
+       :MovingObject(index, init_pos, map, name),robot_type(robot_type),criminal(criminal),sherlock(sherlock),watson(watson)    
+{
+    
+}
+void Robot::move(){
+    int count;
+    if(robot_type== RobotType::SW)
+    {
+       count = 2;
+    }else count =1;
+    for (int i = 0; i < count; i++) {
+		Position nextPosition = getNextPosition();
+		if (!nextPosition.isEqual(Position::npos.getRow(), Position::npos.getCol()))
+			pos = nextPosition;
+	}
+}
+int Robot::getDistance(MovingObject * mv_obj) const
+{
+    return abs(mv_obj->getNextPosition().getRow() - pos.getRow())+abs(mv_obj->getNextPosition().getCol() - pos.getCol());
+}
+string Robot::str(int distance) const 
+{
+    string RT;
+    string result = "Robot[pos=" + pos.str() + ";type=";
+	switch (robot_type) {
+            case C:RT = "C"; break;
+		case S: RT = "S"; break;
+		case W: RT = "W"; break;
+		case SW: RT = "SW"; break;
+	}
+	RT + ";dist=" + ((distance > 0) ? to_string(distance) : "") + ']';
+	return result;    
+}
+Position RobotC::getNextPosition() {
+
+
+}
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
 /////////////////////////////////////////////intint

@@ -186,11 +186,7 @@ private:
 
 public:
     Criminal(int index, const Position & init_pos, Map * map, Sherlock * sherlock, Watson * watson)
-    : MovingObject(index, init_pos, map, "Criminal"),sherlock(sherlock),watson(watson)
-    {
-
-    }
-
+    : MovingObject(index, init_pos, map, "Criminal"),sherlock(sherlock),watson(watson){}
     string getName() const override;
     Position getNextPosition() override;
     void move() override;
@@ -245,14 +241,24 @@ public:
 };
 class Robot : public MovingObject
 {
+    friend class StudyPinkProgram;
     protected:
     RobotType robot_type;
     BaseItem *item; 
+    Criminal *criminal;
+    Sherlock *sherlock;
+    Watson *watson;
+    public:
+    Robot(int index, const Position & init_pos, Map* map, RobotType robot_type, string name, Criminal* criminal, Sherlock* sherlock, Watson* watson);
+    void move() override;
+    int getDistance(MovingObject * mv_obj) const;
+    string str(int distance) const ;
 };
 class RobotC: public Robot
 {
     public:
     RobotC ( int index , const Position & init_pos , Map * map , Criminal *criminal ) ;
+    Position getNextPosition() override;
 };
 class RobotS: public Robot
 {
