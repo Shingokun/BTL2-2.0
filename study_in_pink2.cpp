@@ -45,7 +45,7 @@ Map::~Map()
 bool Map::isValid(const Position& pos, MovingObject* mv_obj) const {
      int i = pos.getRow();
      int j = pos.getCol();
-        if (i<0 || j<0 || i> num_rows || j> num_cols)
+        if (i<0 || j<0 || i>= num_rows || j>= num_cols)
         {   
             return false;
         }
@@ -74,10 +74,10 @@ string Position::str() const
 {
      return "(" + to_string(r) + "," + to_string(c) + ")";
 }
-bool Position::isEqual(int in_r,int in_c) const
+bool Position::isEqual(const Position &pos) const
 {
-   return (this->r==in_r && this->c==in_c);
-}
+    return (r == pos.getRow() && c == pos.getCol());
+};
 const Position Position::npos = Position(-1, -1);
 string MovingObject::getName() const
 {
@@ -85,29 +85,36 @@ string MovingObject::getName() const
 }
 Position Sherlock::getNextPosition() 
 {
-     if (rule_char.empty()) return Position::npos;
-        Position next_pos;
+     Position next_pos = Sherlock::getCurrentPosition();
+     if(rule_index == rule_char.length()) rule_index=0;
         if(rule_char[rule_index] == 'L'){
-            next_pos.setCol(next_pos.getCol()-1);
+            next_pos.setCol(pos.getCol()-1);
         }
         else if(rule_char[rule_index] == 'R'){
-            next_pos.setCol(next_pos.getCol()+1);
+            next_pos.setCol(pos.getCol()+1);
         }
         else if(rule_char[rule_index] == 'U'){
-            next_pos.setRow(next_pos.getRow()-1);
+            next_pos.setRow(pos.getRow()-1);
         }
         else if(rule_char[rule_index] == 'D'){
-            next_pos.setRow(next_pos.getRow()+1);
+            next_pos.setRow(pos.getRow()+1);
         }
-        rule_index = (rule_index + 1) % moving_rule.length();
+        rule_index++;
+        if (map->isValid(next_pos, this))
+        {
         return next_pos;
+        }
+        
+     
+        return Position::npos;
 }
 void Sherlock::move() 
 {
       Position next_pos = getNextPosition();
-         if (map->isValid(next_pos, this)) {
-            pos = next_pos;
-        }
+      if (!next_pos.isEqual(Position::npos))
+      {
+        pos = next_pos;
+      }  
 }
 string Sherlock::str() const
 {
@@ -123,29 +130,38 @@ int Sherlock::getEXP() const
 }
 Position Watson::getNextPosition() 
 {
-     if (rule_char.empty()) return Position::npos;
-        Position next_pos;
+     Position next_pos = Watson::getCurrentPosition();
+    if(rule_index == rule_char.length()) rule_index=0;
+    
         if(rule_char[rule_index] == 'L'){
-            next_pos.setCol(next_pos.getCol()-1);
+            next_pos.setCol(pos.getCol()-1);
         }
         else if(rule_char[rule_index] == 'R'){
-            next_pos.setCol(next_pos.getCol()+1);
+            next_pos.setCol(pos.getCol()+1);
         }
         else if(rule_char[rule_index] == 'U'){
-            next_pos.setRow(next_pos.getRow()-1);
+            next_pos.setRow(pos.getRow()-1);
         }
         else if(rule_char[rule_index] == 'D'){
-            next_pos.setRow(next_pos.getRow()+1);
+            next_pos.setRow(pos.getRow()+1);
         }
-        rule_index = (rule_index + 1) % moving_rule.length();
+        rule_index++;
+        if (map->isValid(next_pos, this))
+        {
+        
         return next_pos;
+        }
+        
+     
+        return Position::npos;
 }
 void Watson::move() 
 {
       Position next_pos = getNextPosition();
-         if (map->isValid(next_pos, this)) {
-            pos = next_pos;
-        }
+      if (!next_pos.isEqual(Position::npos))
+      {
+        pos = next_pos;
+      }
 }
 string Watson::str() const
 {
@@ -169,12 +185,13 @@ string Criminal::str() const
 }
 Position Criminal::getNextPosition() 
 {
-    Position next_pos;
-    int max_distance ;
-    int dis_sherlock;
-    int dis_watson;
-    int total_dis;
-    dis_sherlock = std::abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+    previousPosition = Criminal::getCurrentPosition();
+    Position next_pos ;
+    int max_distance =0;
+    int dis_sherlock =0 ;
+    int dis_watson = 0;
+    int total_dis = 0;
+   dis_sherlock = std::abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
                            std::abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
     dis_watson = std::abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
                          std::abs(pos.getCol() - watson->getCurrentPosition().getCol());
@@ -183,71 +200,73 @@ Position Criminal::getNextPosition()
     //U
     if (map->isValid(Position(pos.getRow() - 1, pos.getCol()), this))
     {
-      pos =  Position(pos.getRow() - 1, pos.getCol());
-    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
-                    abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
-    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
-                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+      next_pos =  Position(pos.getRow() - 1, pos.getCol());
+    dis_sherlock = abs(next_pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                    abs(next_pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(next_pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(next_pos.getCol() - watson->getCurrentPosition().getCol());
     total_dis = dis_sherlock + dis_watson;
     if (total_dis > max_distance) 
     {
-        next_pos = pos;
+        return next_pos;
     }
     }
     //L
-    if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
+    else if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
     {
-      pos =  Position(pos.getRow() , pos.getCol()-1);
-    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
-                 abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
-    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
-                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+      next_pos =  Position(pos.getRow() , pos.getCol()-1);
+    dis_sherlock = abs(next_pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                 abs(next_pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(next_pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(next_pos.getCol() - watson->getCurrentPosition().getCol());
     total_dis = dis_sherlock + dis_watson;
     if (total_dis > max_distance) 
     {
-        next_pos = pos;
+        return next_pos;
     }
     }
     //D
     if (map->isValid(Position(pos.getRow() +1, pos.getCol()), this))
     {
-      pos =  Position(pos.getRow() + 1, pos.getCol());
-    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
-                    abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
-    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
-                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+      next_pos =  Position(pos.getRow() + 1, pos.getCol());
+    dis_sherlock = abs(next_pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                    abs(next_pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(next_pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(next_pos.getCol() - watson->getCurrentPosition().getCol());
     total_dis = dis_sherlock + dis_watson;
     if (total_dis > max_distance) 
     {
-        next_pos = pos;
+        return next_pos;
     }
     }
 
     //R
     if (map->isValid(Position(pos.getRow() , pos.getCol()+1), this))
     {
-      pos =  Position(pos.getRow() , pos.getCol()+1);
-    dis_sherlock = abs(pos.getRow() - sherlock->getCurrentPosition().getRow()) +
-                 abs(pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
-    dis_watson = abs(pos.getRow() - watson->getCurrentPosition().getRow()) +
-                abs(pos.getCol() - watson->getCurrentPosition().getCol());
+      next_pos =  Position(pos.getRow() , pos.getCol()+1);
+    dis_sherlock = abs(next_pos.getRow() - sherlock->getCurrentPosition().getRow()) +
+                 abs(next_pos.getCol() - sherlock->getCurrentPosition().getCol()) ;
+    dis_watson = abs(next_pos.getRow() - watson->getCurrentPosition().getRow()) +
+                abs(next_pos.getCol() - watson->getCurrentPosition().getCol());
     total_dis = dis_sherlock + dis_watson;
     if (total_dis > max_distance) 
     {
-        next_pos = pos;
+        return next_pos;
     }
     }
-
     
-
-    return next_pos;
+        return Position::npos;
+    
 }
 void Criminal::move() 
 {
       Position next_pos = getNextPosition();
-         if (map->isValid(next_pos, this)) {
-            pos = next_pos;
-        }
+        if (!next_pos.isEqual(Position::npos))
+    {
+        
+        pos = next_pos;
+        
+    }
 }
 bool ArrayMovingObject::isFull() const
 {
@@ -451,11 +470,8 @@ string Configuration::str() const
   ss<<"]";
   return ss.str();
 }
-Robot::Robot(int index, const Position & init_pos, Map * map, RobotType robot_type, string name, Criminal* criminal, Sherlock* sherlock, Watson* watson)
-       :MovingObject(index, init_pos, map, name),robot_type(robot_type),criminal(criminal),sherlock(sherlock),watson(watson)    
-{
-    
-}
+Robot::Robot(int index, const Position & init_pos, Map * map, RobotType robot_type, string name, Criminal* criminal=nullptr, Sherlock* sherlock=nullptr, Watson* watson=nullptr)
+       :MovingObject(index, init_pos, map, name),robot_type(robot_type),criminal(criminal),sherlock(sherlock),watson(watson){}
 void Robot::move(){
     int count;
     if(robot_type== RobotType::SW)
@@ -464,7 +480,7 @@ void Robot::move(){
     }else count =1;
     for (int i = 0; i < count; i++) {
 		Position nextPosition = getNextPosition();
-		if (!nextPosition.isEqual(Position::npos.getRow(), Position::npos.getCol()))
+		if (!nextPosition.isEqual(Position::npos))
 			pos = nextPosition;
 	}
 }
@@ -472,23 +488,79 @@ int Robot::getDistance(MovingObject * mv_obj) const
 {
     return abs(mv_obj->getNextPosition().getRow() - pos.getRow())+abs(mv_obj->getNextPosition().getCol() - pos.getCol());
 }
-string Robot::str(int distance) const 
+string Robot::strR(int distance) const 
 {
     string RT;
-    string result = "Robot[pos=" + pos.str() + ";type=";
-	switch (robot_type) {
+    switch (robot_type) {
             case C:RT = "C"; break;
 		case S: RT = "S"; break;
 		case W: RT = "W"; break;
 		case SW: RT = "SW"; break;
 	}
-	RT + ";dist=" + ((distance > 0) ? to_string(distance) : "") + ']';
+
+    string result = "Robot[pos=" + pos.str() + ";type="+RT + ";dist=" + ((distance > 0) ? to_string(distance) : "") + ']';
 	return result;    
 }
-Position RobotC::getNextPosition() {
-
-
+Position RobotS::getNextPosition()
+{
+    Position next_pos;
+    int min_distance =100 ;
+    int dis_sherlock = getDistanceS() ;
+    //U
+    if (map->isValid(Position(pos.getRow() - 1, pos.getCol()), this))
+    {
+      pos =  Position(pos.getRow() - 1, pos.getCol());
+    dis_sherlock = getDistanceS() ;
+    if (dis_sherlock < min_distance) 
+    {
+        min_distance = dis_sherlock;
+        next_pos = pos;
+    }
+    }
+    //R
+    if (map->isValid(Position(pos.getRow() , pos.getCol()+1), this))
+    {
+      pos =  Position(pos.getRow() , pos.getCol()+1);
+    dis_sherlock = getDistanceS();
+   
+    if (dis_sherlock< min_distance) 
+    {
+        min_distance = dis_sherlock;
+        next_pos = pos;
+    }
+    }
+   
+    //D
+    if (map->isValid(Position(pos.getRow() +1, pos.getCol()), this))
+    {
+      pos =  Position(pos.getRow() + 1, pos.getCol());
+    dis_sherlock = getDistanceS();
+    
+    if (dis_sherlock < min_distance) 
+    {
+        min_distance = dis_sherlock;
+        next_pos = pos;
+    }
+    }
+     //L
+    if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
+    {
+      pos =  Position(pos.getRow() , pos.getCol()-1);
+    dis_sherlock = getDistanceS();
+   
+   
+    if (dis_sherlock< min_distance) 
+    {
+        min_distance = dis_sherlock;
+        next_pos = pos;
+    }
+    }
+    if (next_pos.isEqual(Position::npos)){
+            return Position::npos;
+    }
+    return next_pos;
 }
+
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
 /////////////////////////////////////////////intint

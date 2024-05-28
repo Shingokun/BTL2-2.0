@@ -104,7 +104,7 @@ class Position{
 
     string str() const;
 
-    bool isEqual(int in_r, int in_c) const;
+    bool isEqual(const Position &pos) const;
     
 
 };
@@ -137,12 +137,12 @@ private:
     int hp;
     int exp;
     string rule_char;
-    int rule_index;
+    int rule_index=0;
     
 
 public:
     Sherlock(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp)
-    : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(min(init_exp,500)), exp(min(init_exp,900)), rule_index(0)
+    : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(min(init_exp,500)), exp(min(init_exp,900))
     {
         rule_char = moving_rule;
     }
@@ -162,11 +162,11 @@ private:
     int hp;
     int exp;
     string rule_char;
-    int rule_index;
+    int rule_index=0;
     
 public:
     Watson(int index, const string & moving_rule, const Position & init_pos, Map * map, int init_hp, int init_exp)
-    : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(min(init_exp,500)), exp(min(init_exp,900)), rule_index(0)
+    : MovingObject(index, init_pos, map, "Sherlock"), moving_rule(moving_rule), hp(min(init_exp,500)), exp(min(init_exp,900))
     {
         rule_char = moving_rule;
     }
@@ -176,6 +176,7 @@ public:
     string str() const override;
     string getName() const override;  
     
+    
 };
 
 class Criminal:public MovingObject /* TODO */ {
@@ -183,6 +184,7 @@ private:
     // TODO
     Sherlock* sherlock;
     Watson* watson;
+    Position previousPosition;
 
 public:
     Criminal(int index, const Position & init_pos, Map * map, Sherlock * sherlock, Watson * watson)
@@ -191,6 +193,8 @@ public:
     Position getNextPosition() override;
     void move() override;
     string str() const override;
+    Position getPriviousPosition()
+    { return previousPosition;}
     // ...
 };
 
@@ -244,7 +248,7 @@ class Robot : public MovingObject
     friend class StudyPinkProgram;
     protected:
     RobotType robot_type;
-    BaseItem *item; 
+    //BaseItem *item; 
     Criminal *criminal;
     Sherlock *sherlock;
     Watson *watson;
@@ -252,23 +256,41 @@ class Robot : public MovingObject
     Robot(int index, const Position & init_pos, Map* map, RobotType robot_type, string name, Criminal* criminal, Sherlock* sherlock, Watson* watson);
     void move() override;
     int getDistance(MovingObject * mv_obj) const;
-    string str(int distance) const ;
+
+    string strR(int distance) const ; 
 };
 class RobotC: public Robot
 {
+    friend class StudyPinkProgram;
     public:
-    RobotC ( int index , const Position & init_pos , Map * map , Criminal *criminal ) ;
-    Position getNextPosition() override;
+    RobotC( int index , const Position & init_pos , Map * map , Criminal *criminal )
+        :Robot(index, init_pos, map, RobotType::C, "RobotC",criminal, nullptr,nullptr){}
+    Position getNextPosition() override { return criminal->getPriviousPosition(); }
+    void moveC() { move(); }
+    int getDistanceC(Sherlock* mv_obj) const { return getDistance(mv_obj); }
+    int getDistanceC(Watson* mv_obj) const { return getDistance(mv_obj); }
+    string str() const override { return strR(-1); }
+
 };
 class RobotS: public Robot
-{
-    public:
-    RobotS ( int index , const Position & init_pos , Map * map , Criminal *criminal , Sherlock * sherlock ) ;
+{   
+    friend class StudyPinkProgram;
+    public: 
+    RobotS ( int index , const Position & init_pos , Map * map , Criminal *criminal , Sherlock * sherlock )
+           :Robot(index, init_pos, map, RobotType::S, "RobotS",criminal,sherlock,nullptr){}
+    void moveS() { move(); }
+    int getDistanceS() const { return getDistance(sherlock); } 
+    Position getNextPosition() override ;
+    string str() const { return strR(getDistanceS()); }
+    
 };
 class RobotW: public Robot
 {
    public:
-   RobotW ( int index , const Position & init_pos , Map * map , Criminal *criminal , Watson * watson ) ;
+   RobotW ( int index , const Position & init_pos , Map * map , Criminal *criminal , Watson * watson )
+          :Robot(index, init_pos, map, RobotType::W, "RobotW", criminal, nullptr, watson ){}
+    
+   
 };
 class RobotSW : public Robot
 {
@@ -276,7 +298,7 @@ class RobotSW : public Robot
    RobotSW ( int index , const Position & init_pos , Map * map , Criminal *criminal , Sherlock * sherlock , Watson * watson ) ;
 };
 // Robot, BaseItem, BaseBag,...
-/*
+
 class StudyPinkProgram {
 private:
     // Sample attributes
@@ -333,7 +355,7 @@ public:
 
     ~StudyPinkProgram();
 };
-*/
+
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
 ////////////////////////////////////////////////
