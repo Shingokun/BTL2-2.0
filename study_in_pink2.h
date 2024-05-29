@@ -105,6 +105,7 @@ class Position{
     string str() const;
 
     bool isEqual(const Position &pos) const;
+    bool isEqual(int r , int x) const;
     
 
 };
@@ -252,6 +253,7 @@ class Robot : public MovingObject
     Criminal *criminal;
     Sherlock *sherlock;
     Watson *watson;
+    Position next_pos;
     public:
     Robot(int index, const Position & init_pos, Map* map, RobotType robot_type, string name, Criminal* criminal, Sherlock* sherlock, Watson* watson);
     void move() override;
@@ -289,13 +291,21 @@ class RobotW: public Robot
    public:
    RobotW ( int index , const Position & init_pos , Map * map , Criminal *criminal , Watson * watson )
           :Robot(index, init_pos, map, RobotType::W, "RobotW", criminal, nullptr, watson ){}
-    
+    void moveS() { move(); }
+    int getDistanceW() const { return getDistance(sherlock); } 
+    Position getNextPosition() override ;
+    string str() const { return strR(getDistanceW()); }
    
 };
 class RobotSW : public Robot
 {
    public:
    RobotSW ( int index , const Position & init_pos , Map * map , Criminal *criminal , Sherlock * sherlock , Watson * watson ) ;
+       void moveS() { move(); }
+    int getDistanceS() const { return getDistance(sherlock); }
+    int getDistanceW() const { return getDistance(watson); } 
+    Position getNextPosition() override ;
+    string str() const { return strR(getDistanceS()+getDistanceW()); }
 };
 // Robot, BaseItem, BaseBag,...
 

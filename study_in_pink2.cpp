@@ -509,50 +509,50 @@ Position RobotS::getNextPosition()
     //U
     if (map->isValid(Position(pos.getRow() - 1, pos.getCol()), this))
     {
-      pos =  Position(pos.getRow() - 1, pos.getCol());
+      next_pos =  Position(pos.getRow() - 1, pos.getCol());
     dis_sherlock = getDistanceS() ;
     if (dis_sherlock < min_distance) 
     {
         min_distance = dis_sherlock;
-        next_pos = pos;
+       return next_pos;
     }
     }
     //R
     if (map->isValid(Position(pos.getRow() , pos.getCol()+1), this))
     {
-      pos =  Position(pos.getRow() , pos.getCol()+1);
+      next_pos =  Position(pos.getRow() , pos.getCol()+1);
     dis_sherlock = getDistanceS();
    
     if (dis_sherlock< min_distance) 
     {
         min_distance = dis_sherlock;
-        next_pos = pos;
+        return next_pos;
     }
     }
    
     //D
     if (map->isValid(Position(pos.getRow() +1, pos.getCol()), this))
     {
-      pos =  Position(pos.getRow() + 1, pos.getCol());
+      next_pos =  Position(pos.getRow() + 1, pos.getCol());
     dis_sherlock = getDistanceS();
     
     if (dis_sherlock < min_distance) 
     {
         min_distance = dis_sherlock;
-        next_pos = pos;
+        return next_pos;
     }
     }
      //L
     if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
     {
-      pos =  Position(pos.getRow() , pos.getCol()-1);
+      next_pos =  Position(pos.getRow() , pos.getCol()-1);
     dis_sherlock = getDistanceS();
    
    
     if (dis_sherlock< min_distance) 
     {
         min_distance = dis_sherlock;
-        next_pos = pos;
+        return next_pos;
     }
     }
     if (next_pos.isEqual(Position::npos)){
@@ -560,6 +560,131 @@ Position RobotS::getNextPosition()
     }
     return next_pos;
 }
+Position RobotW::getNextPosition()
+{
+    Position next_pos;
+    int min_distance =100 ;
+    int dis_watson = getDistanceW() ;
+    //U
+    if (map->isValid(Position(pos.getRow() - 1, pos.getCol()), this))
+    {
+      next_pos =  Position(pos.getRow() - 1, pos.getCol());
+    dis_watson = getDistanceW() ;
+    if (dis_watson < min_distance) 
+    {
+        min_distance = dis_watson;
+        return next_pos;
+    }
+    }
+    //R
+    if (map->isValid(Position(pos.getRow() , pos.getCol()+1), this))
+    {
+      next_pos =  Position(pos.getRow() , pos.getCol()+1);
+    dis_watson = getDistanceW();
+   
+    if (dis_watson< min_distance) 
+    {
+        min_distance = dis_watson;
+        return next_pos;
+    }
+    }
+   
+    //D
+    if (map->isValid(Position(pos.getRow() +1, pos.getCol()), this))
+    {
+      next_pos =  Position(pos.getRow() + 1, pos.getCol());
+    dis_watson = getDistanceW();
+    
+    if (dis_watson < min_distance) 
+    {
+        min_distance = dis_watson;
+        return next_pos;
+    }
+    }
+     //L
+    if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
+    {
+      next_pos =  Position(pos.getRow() , pos.getCol()-1);
+    dis_watson = getDistanceW();
+   
+   
+    if (dis_watson< min_distance) 
+    {
+        min_distance = dis_watson;
+        return next_pos;
+    }
+    }
+    if (next_pos.isEqual(Position::npos)){
+            return Position::npos;
+    }
+    return next_pos;
+}
+Position RobotSW::getNextPosition()
+{
+    Position next_pos;
+    int min_distance =100 ;
+    int dis_watson = getDistanceW() ;
+    int dis_sherlock = getDistanceS();
+    int total;
+    //U
+    if (map->isValid(Position(pos.getRow() - 1, pos.getCol()), this))
+    {
+      next_pos =  Position(pos.getRow() - 1, pos.getCol());
+    dis_watson = getDistanceW() ;
+    dis_sherlock = getDistanceS() ;
+    total =dis_sherlock + dis_watson;
+    if (total < min_distance) 
+    {
+        min_distance = total;
+        return next_pos;
+    }
+    }
+    //R
+    if (map->isValid(Position(pos.getRow() , pos.getCol()+1), this))
+    {
+      next_pos =  Position(pos.getRow() , pos.getCol()+1);
+    dis_watson = getDistanceW() ;
+    dis_sherlock = getDistanceS() ;
+    total =dis_sherlock + dis_watson;
+    if (total < min_distance) 
+    {
+        min_distance = total;
+        return next_pos;
+    }
+    }
+   
+    //D
+    if (map->isValid(Position(pos.getRow() +1, pos.getCol()), this))
+    {
+      next_pos =  Position(pos.getRow() + 1, pos.getCol());
+    dis_watson = getDistanceW() ;
+    dis_sherlock = getDistanceS() ;
+    total =dis_sherlock + dis_watson;
+    if (total < min_distance) 
+    {
+        min_distance = total;
+        return next_pos;
+    }
+    }
+     //L
+    if (map->isValid(Position(pos.getRow() , pos.getCol()-1), this))
+    {
+      next_pos =  Position(pos.getRow() , pos.getCol()-1);
+    dis_watson = getDistanceW() ;
+    dis_sherlock = getDistanceS() ;
+    total =dis_sherlock + dis_watson;
+    if (total < min_distance) 
+    {
+        min_distance = total;
+        return next_pos;
+    }
+    }
+    if (next_pos.isEqual(Position::npos)){
+            return Position::npos;
+    }
+    return next_pos;
+}
+
 
 ////////////////////////////////////////////////
 /// END OF STUDENT'S ANSWER
